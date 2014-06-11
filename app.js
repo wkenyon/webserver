@@ -7,8 +7,9 @@ var auth = require('http-auth');
 
 var basic = auth.basic({realm: ""},
   function (username, password, callback) {
-    bcrypt.compare(password, fs.readFileSync('htpasswd',{encoding:'utf8'}), function(err, res) {
-      callback(res);
+    bcrypt.compare(password, fs.readFileSync('htpasswd',{encoding:'utf8'}),
+      function(err, res) {
+        callback(res);
     });
   }
 );

@@ -1,0 +1,17 @@
+{
+    "author": "William Kenyon",
+    "name": "secret.wkenyon.net",
+    "description": "Simple Web Server. Serves a single password protected page over a https connection.",
+    "version": "0.0.1",
+    "repository": {
+        "type" : "git",
+        "url": "git://github.com/wkenyon/secret.wkenyon.net.git"
+    },
+    "licenses" : [
+      {"type" : "Unlicense"}
+    ],
+    "dependencies": {
+       "bcrypt" : "0.7.x",
+       "http-auth" : "2.1.x"
+    }
+}

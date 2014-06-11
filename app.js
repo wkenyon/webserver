@@ -1,4 +1,4 @@
-//usage: node app.js [html file] [private key file] [certificate file]
+//usage: node app.js [html file] [private key file] [certificate file] [ca file]
 
 var bcrypt = require('bcrypt');
 var https = require('https');
@@ -15,6 +15,7 @@ var basic = auth.basic({realm: ""},
 );
 
 var options = {
+  ca : [fs.readFileSync(process.argv[5])] //argv[5] = [ca file]
   key: fs.readFileSync(process.argv[3]), //argv[3] = [private key file]
   cert: fs.readFileSync(process.argv[4]) //argv[4] = [certificate file]
 };

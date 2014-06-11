@@ -16,4 +16,4 @@ Install
 2. cd secret.wkenyon.net
 3. npm install --python=python2
    (--python=python2 only required if you have python2 and python3 on the same system)
-4. node app.js singlepage.html private-key.pem certificate.pem
+4. node app.js [html file] [private key file] [certificate file] [ca file]

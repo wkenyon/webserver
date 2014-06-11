@@ -1,3 +1,5 @@
+//usage: node app.js [html file] [private key file] [certificate file]
+
 var bcrypt = require('bcrypt');
 var https = require('https');
 var fs = require('fs');
@@ -11,16 +13,15 @@ var basic = auth.basic({realm: ""},
   }
 );
 
-
 var options = {
-  key: fs.readFileSync("private-key.pem"),
-  cert: fs.readFileSync("certificate.pem")
+  key: fs.readFileSync(process.argv[3]), //argv[3] = [private key file]
+  cert: fs.readFileSync(process.argv[4]) //argv[4] = [certificate file]
 };
 
 // Starting server.
 https.createServer(basic, options, function (req, res) {
-    res.end(fs.readFileSync("portable.html"));
 }).listen(443);
+    res.end(fs.readFileSync(process.argv[2])); //argv[2] = [html file]
 
 // Log URL.
 console.log("Server running at https://127.0.0.1:443/");

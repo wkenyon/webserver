@@ -21,8 +21,8 @@ var options = {
 
 // Starting server.
 https.createServer(basic, options, function (req, res) {
-}).listen(443);
     res.end(fs.readFileSync(process.argv[2])); //argv[2] = [html file]
+}).listen(443);
 
 // Log URL.
 console.log("Server running at https://127.0.0.1:443/");

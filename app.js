@@ -19,10 +19,26 @@ var options = {
   cert: fs.readFileSync(process.argv[4]) //argv[4] = [certificate file]
 };
 
+
+
 // Starting server.
 https.createServer(basic, options, function (req, res) {
-    res.end(fs.readFileSync(process.argv[2])); //argv[2] = [html file]
+  //log request
+  var now = new Date();
+  var jsonDate = now.toJSON();
+  var ip = req.headers['x-forwarded-for'] ||
+     req.connection.remoteAddress ||
+     req.socket.remoteAddress ||
+     req.connection.socket.remoteAddress;
+  console.log(jsonDate + ": request from: " + ip);
+  console.log("                          user: " + req.user);
+
+  //actually serve file
+  res.writeHead(200)
+  res.end(fs.readFileSync(process.argv[2])); //argv[2] = [html file]
 }).listen(443);
 
-// Log URL.
-console.log("Server running at https://127.0.0.1:443/");
+// log server starting
+var now = new Date();
+var jsonDate = now.toJSON();
+console.log(jsonDate + ": Server running at https://127.0.0.1:443/");

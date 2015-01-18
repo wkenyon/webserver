@@ -1,45 +1,29 @@
-//usage: node app.js [html file] [private key file] [certificate file] [ca file]
-
-var bcrypt = require('bcrypt');
 var https = require('https');
+var http = require('http');
+var express = require('express');
+var logger = require('morgan');
+
 var fs = require('fs');
-var auth = require('http-auth');
 
-var basic = auth.basic({realm: ""},
-  function (username, password, callback) {
-    bcrypt.compare(password, fs.readFileSync('htpasswd',{encoding:'utf8'}),
-      function(err, res) {
-        callback(res);
-    });
-  }
-);
+var app = express();
+app.use(logger())
 
-var options = {
-  ca : [fs.readFileSync(process.argv[5])] //argv[5] = [ca file]
-  key: fs.readFileSync(process.argv[3]), //argv[3] = [private key file]
-  cert: fs.readFileSync(process.argv[4]) //argv[4] = [certificate file]
+var server_options = {
+    ca : [fs.readFileSync('keys/ca.pem')], //[ca file]
+    key: fs.readFileSync('keys/private-key.pem'), // [private key file]
+    cert: fs.readFileSync('keys/certificate.pem') // [certificate file]
 };
 
+// Starting https server for virtual hosts
+app.use(express.vhost('secret.wkenyon.net', require ('./secret.wkenyon.net/app.js').app));
+app.use(express.vhost('wkenyon.net', require ('./wkenyon.net/app.js').app));
 
+https.createServer(server_options,app).listen(44300);
 
-// Starting server.
-https.createServer(basic, options, function (req, res) {
-  //log request
-  var now = new Date();
-  var jsonDate = now.toJSON();
-  var ip = req.headers['x-forwarded-for'] ||
-     req.connection.remoteAddress ||
-     req.socket.remoteAddress ||
-     req.connection.socket.remoteAddress;
-  console.log(jsonDate + ": request from: " + ip);
-  console.log("                          user: " + req.user);
-
-  //actually serve file
-  res.writeHead(200)
-  res.end(fs.readFileSync(process.argv[2])); //argv[2] = [html file]
-}).listen(443);
-
-// log server starting
-var now = new Date();
-var jsonDate = now.toJSON();
-console.log(jsonDate + ": Server running at https://127.0.0.1:443/");
+// Starting http redirect server
+http.createServer(function(req, res) {
+    res.writeHead(302, {
+        'Location': 'https://' + req.headers.host + req.url
+    });
+    res.end();
+}).listen(8000);
